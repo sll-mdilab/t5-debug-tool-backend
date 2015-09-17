@@ -1,0 +1,85 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.2.RELEASE")
+    }
+}
+
+configurations.all {
+    resolutionStrategy.eachDependency {
+        if (it.requested.name == 'log4j') {
+            it.useTarget 'org.slf4j:log4j-over-slf4j:1.7.10'
+        }
+    }
+    exclude module: 'slf4j-log4j12'
+}
+
+
+apply plugin: 'java'
+apply plugin: 'eclipse-wtp'
+apply plugin: 'idea'
+apply plugin: 'spring-boot'
+apply plugin: 'war'
+
+sourceCompatibility = 1.8
+version = '1.0'
+
+war {
+    baseName = 'debug-tool-backend'
+    version =  '0.1.0'
+    from 'extra'
+}
+
+repositories {
+    mavenCentral()
+    maven { url "http://repo.spring.io/libs-milestone" }
+    maven {
+      url 'http://developer.marklogic.com/maven2'
+    }
+       flatDir {
+      dirs '../t5-repo'
+    }
+    flatDir {
+      dirs 'lib'
+    }
+}
+
+configurations {
+    providedRuntime
+}
+
+dependencies {
+
+    compile ('org.springframework.boot:spring-boot-starter-web:1.2.2.RELEASE') {
+        exclude module: "spring-boot-starter-tomcat"
+    }
+    
+    providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")
+    
+    compile 'org.springframework.boot:spring-boot-starter-logging:1.2.2.RELEASE'
+    compile 'org.slf4j:log4j-over-slf4j:1.7.10'
+    compile 'commons-collections:commons-collections:3.2'
+    compile 'com.marklogic:marklogic-xcc:7.0.4'
+    compile 'org.apache.commons:commons-lang3:3.3.2'
+    compile name: 't5-commons-1.0'
+    compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.5.4'
+   	compile 'ca.uhn.hapi.fhir:hapi-fhir-base:0.9'
+    
+    providedCompile 'javax.servlet:javax.servlet-api:3.1.0'
+    
+    testCompile("org.springframework.boot:spring-boot-starter-test")
+}
+
+uploadArchives {
+    repositories {
+       flatDir {
+           dirs 'repos'
+       }
+    }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.3'
+}
