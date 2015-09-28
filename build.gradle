@@ -27,8 +27,8 @@ sourceCompatibility = 1.8
 version = '1.0'
 
 war {
-    baseName = 'debug-tool-backend'
-    version =  '0.1.0'
+    baseName = 't5-debug-tool-backend'
+    version =  '0.1.2'
     from 'extra'
 }
 
